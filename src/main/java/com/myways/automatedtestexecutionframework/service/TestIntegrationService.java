@@ -1,5 +1,4 @@
 package com.myways.automatedtestexecutionframework.service;
-
 import com.myways.automatedtestexecutionframework.adapter.ApiAdapter;
 import com.myways.automatedtestexecutionframework.adapter.SeleniumAdapter;
 import com.myways.automatedtestexecutionframework.entity.TestCase;
@@ -9,7 +8,6 @@ import com.myways.automatedtestexecutionframework.repository.TestExecutionReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -27,11 +25,17 @@ public class TestIntegrationService {
     @Value("${app.reports.path:./reports}")
     private String reportsPath;
 
+    @Autowired
+    private EmailService emailService;
+
+    //save testcase
     public TestCase integrate(TestCase tc) {
         return testCaseRepository.save(tc);
     }
 
-    public Optional<TestCase> getTestCase(Long id) { return testCaseRepository.findById(id); }
+    public Optional<TestCase> getTestCase(Long id) {
+        return testCaseRepository.findById(id);
+    }
 
     public TestExecution executeTest(Long testCaseId) throws Exception {
         TestCase tc = testCaseRepository.findById(testCaseId).orElseThrow(() -> new RuntimeException("TestCase not found"));
@@ -52,7 +56,10 @@ public class TestIntegrationService {
         } else {
             ApiAdapter.runApiTest(tc.getEndpoint(), exec, reportsDir);
         }
-
+        // **** EMAIL TRIGGER POINT (DOCUMENT COMPLIANT)
+        if ("FAILED".equalsIgnoreCase(exec.getStatus())) {
+            emailService.sendFailureEmail(exec);
+        }
         exec.setCompletedAt(LocalDateTime.now());
         return executionRepository.save(exec);
     }

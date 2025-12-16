@@ -29,8 +29,9 @@ public class TestController {
     @PostMapping("/integrate")
     public ResponseEntity<TestCase> integrate(@RequestBody TestCaseDto dto) {
         TestCase tc = new TestCase();
-        tc.setTestName(dto.testName);
-        tc.setTestType(dto.testType);
+      //  tc.setTestName(dto.testName);
+        tc.setTestType(dto.getClass().getTypeName());
+       tc.setTestType(dto.testType);
         tc.setFramework(dto.framework);
         tc.setEndpoint(dto.endpoint);
         tc.setMethod(dto.method);

@@ -39,12 +39,18 @@ public class TestIntegrationService {
 
     public TestExecution executeTest(Long testCaseId) throws Exception {
         TestCase tc = testCaseRepository.findById(testCaseId).orElseThrow(() -> new RuntimeException("TestCase not found"));
+        System.out.println(tc.getClass()+"complte class");
+
+
         TestExecution exec = new TestExecution();
         exec.setSuiteName("single-run");
         exec.setTriggeredBy(tc.getTestName());
         exec.setExecutionMode(tc.getTestType());
         exec.setTotalTests(1);
-        exec.setStatus("PENDING");
+       // exec.setStatus(tc.getFramework());
+//        exec.setStatus("PENDING");
+//        exec.setStatus("PENDING");
+//        exec.setStatus("PENDING"+"uuuuuuuu");
         exec.setStartedAt(LocalDateTime.now());
         executionRepository.save(exec);
 
@@ -53,7 +59,9 @@ public class TestIntegrationService {
 
         if ("WEB".equalsIgnoreCase(tc.getTestType())) {
             SeleniumAdapter.runUiTest(tc.getEndpoint(), exec, reportsDir);
-        } else {
+        }
+        else
+        {
             ApiAdapter.runApiTest(tc.getEndpoint(), exec, reportsDir);
         }
         // **** EMAIL TRIGGER POINT (DOCUMENT COMPLIANT)

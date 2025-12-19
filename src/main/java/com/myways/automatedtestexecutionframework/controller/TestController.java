@@ -29,7 +29,7 @@ public class TestController {
     @PostMapping("/integrate")
     public ResponseEntity<TestCase> integrate(@RequestBody TestCaseDto dto) {
         TestCase tc = new TestCase();
-      //  tc.setTestName(dto.testName);
+        tc.setTestName(dto.testName);
         tc.setTestType(dto.getClass().getTypeName());
        tc.setTestType(dto.testType);
         tc.setFramework(dto.framework);
@@ -46,7 +46,14 @@ public class TestController {
         return tc.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
+    @DeleteMapping("deleteExecution/{id}")
+    public ResponseEntity<?> deleteTestCase(@PathVariable("id") Long id) {
+        if (!testCaseRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        testCaseRepository.deleteById(id);
+        return ResponseEntity.ok("Test case deleted");
+    }
 
 
 
@@ -73,5 +80,19 @@ public class TestController {
     @GetMapping("/executions/{id}")
     public ResponseEntity<TestExecution> getExecution(@PathVariable("id") Long id) {
         return executionRepository.findById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @GetMapping("/getalltestexecution")
+    public List<TestExecution> getAllExecutions() {
+        return executionRepository.findAll();
+    }
+
+    // DELETE execution
+    @DeleteMapping("deleteExecutionexc/{id}")
+    public ResponseEntity<?> deleteExecutionexc(@PathVariable("id") Long id) {
+        if (!executionRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        executionRepository.deleteById(id);
+        return ResponseEntity.ok().body("Execution deleted");
     }
 }

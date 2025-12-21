@@ -1,6 +1,4 @@
-
 package com.myways.automatedtestexecutionframework.dto;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;

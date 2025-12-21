@@ -27,7 +27,9 @@ public class TestIntegrationService {
 
     @Autowired
     private EmailService emailService;
-
+    public long getTotalTests() {
+        return testCaseRepository.count();
+    }
     //save testcase
     public TestCase integrate(TestCase tc) {
         return testCaseRepository.save(tc);
